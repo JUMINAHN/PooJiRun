@@ -1,0 +1,40 @@
+/* .Navbar {
+  display: flex;
+} */
+
+.Navbar {
+  cursor: pointer;
+  background-color: rgb(245, 245, 245);
+  border-radius: 13px;
+  /* gap: 10px; */
+}
+
+.Navbar .short_nav {
+  /* border: 1px solid black; */
+  border-radius: 13px;
+  background-color: rgb(245, 245, 245);
+  /* background-color: rgb(194, 234, 245); */
+  /* margin: auto; */
+  text-align: center;
+  margin-top: 3px;
+  padding-top: 3px;
+  width: 50px;
+  height: 40px;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.Navbar .long_nav > p {
+  font-size: 14px;
+  /* font-weight: bold; */
+  padding: 5px;
+  /* border: 1px solid black; */
+  /* padding: 5px; */
+}
+
+.Navbar_long {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
