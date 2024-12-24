@@ -99,6 +99,8 @@ def get_nearest_toilet(user_latitude, user_longitude):
         return None, None
 
 from django.http import JsonResponse
+from django.http import JsonResponse
+
 def emergency_request(request):
     try:
         user_latitude = float(request.GET.get('latitude'))
@@ -106,12 +108,19 @@ def emergency_request(request):
         nearest_toilet, distance = get_nearest_toilet(user_latitude, user_longitude)
 
         if nearest_toilet:
+            # 거리와 예상 소요 시간 계산
+            distance_text, duration_text = get_distance_and_duration(user_latitude, user_longitude,
+                                                                     nearest_toilet.latitude,
+                                                                     nearest_toilet.longitude)
+
             return JsonResponse({
                 'name': nearest_toilet.name,
                 'latitude': nearest_toilet.latitude,
                 'longitude': nearest_toilet.longitude,
                 'address': nearest_toilet.address,
                 'distance': round(distance, 2),  # km 단위로 거리 표시
+                'estimated_distance': distance_text,  # Google Maps에서 가져온 거리
+                'estimated_duration': duration_text,  # Google Maps에서 가져온 예상 소요 시간
                 'is_accessible': nearest_toilet.is_accessible,
                 'opening_hours': nearest_toilet.opening_hours
             }, content_type='application/json')
@@ -123,3 +132,23 @@ def emergency_request(request):
         return JsonResponse({
             'error': 'Invalid coordinates provided'
         }, status=400, content_type='application/json')
+
+
+import requests
+
+def get_distance_and_duration(user_latitude, user_longitude, toilet_latitude, toilet_longitude):
+    api_key = 'YOUR_GOOGLE_MAPS_API_KEY'  # 여기에 본인의 API 키를 입력하세요.
+    origin = f"{user_latitude},{user_longitude}"
+    destination = f"{toilet_latitude},{toilet_longitude}"
+    
+    url = f"https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins={origin}&destinations={destination}&key={api_key}"
+    
+    response = requests.get(url)
+    data = response.json()
+    
+    if data['status'] == 'OK':
+        distance_text = data['rows'][0]['elements'][0]['distance']['text']
+        duration_text = data['rows'][0]['elements'][0]['duration']['text']
+        return distance_text, duration_text
+    else:
+        return None, None
