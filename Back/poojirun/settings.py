@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'channels',
     # 'rest_auth',  # 사용자 인증 관련 앱 추가
     'rest_framework.authtoken',  # Token 인증 사용
     'toilet',   # 화장실 관련 앱
@@ -76,6 +77,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'poojirun.wsgi.application'
+
+ASGI_APPLICATION = 'poojirun.asgi.application'  # ASGI 애플리케이션 경로 설정
+
 
 # settings.py
 
@@ -131,6 +135,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

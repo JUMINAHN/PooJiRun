@@ -8,6 +8,7 @@ from .views import (
     CommentDetailView,
     PoliceStationListView,
     PoliceStationDetailView,
+    emergency_request
 )
 
 urlpatterns = [
@@ -21,4 +22,7 @@ urlpatterns = [
     
     path('police-stations/', PoliceStationListView.as_view(), name='police-station-list'),
     path('police-stations/<int:pk>/', PoliceStationDetailView.as_view(), name='police-station-detail'),
+
+    path('emergency/', emergency_request, name='emergency_request'),
+
 ]

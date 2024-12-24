@@ -1,8 +1,8 @@
 # toilet/views.py
-
 from rest_framework import generics, permissions
 from .models import Toilet, Review, Comment, PoliceStation
 from .serializers import ToiletSerializer, ReviewSerializer, CommentSerializer, PoliceStationSerializer
+from math import radians, sin, cos, sqrt, atan2
 
 
 class ToiletListView(generics.ListCreateAPIView):
@@ -13,7 +13,6 @@ class ToiletListView(generics.ListCreateAPIView):
     serializer_class = ToiletSerializer
     permission_classes = [permissions.AllowAny]
 
-
 class ToiletDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
     특정 화장실 조회, 수정 및 삭제
@@ -21,6 +20,7 @@ class ToiletDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Toilet.objects.all()
     serializer_class = ToiletSerializer
     permission_classes = [permissions.AllowAny]  # 모든 사용자 접근 가능
+
 
 
 # views.py
@@ -76,3 +76,50 @@ class PoliceStationDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = PoliceStation.objects.all()
     serializer_class = PoliceStationSerializer
     permission_classes = [permissions.AllowAny]  # 모든 사용자 접근 가능
+
+def get_nearest_toilet(user_latitude, user_longitude):
+    try:
+        nearest_toilet = None
+        min_distance = float('inf')
+
+        for toilet in Toilet.objects.all():
+            # Haversine 공식을 사용하여 거리 계산
+            dlat = radians(float(toilet.latitude) - float(user_latitude))
+            dlon = radians(float(toilet.longitude) - float(user_longitude))
+            a = sin(dlat / 2)**2 + cos(radians(float(user_latitude))) * cos(radians(float(toilet.latitude))) * sin(dlon / 2)**2
+            c = 2 * atan2(sqrt(a), sqrt(1 - a))
+            distance = 6371 * c  # 지구 반지름 (km)
+
+            if distance < min_distance:
+                min_distance = distance
+                nearest_toilet = toilet
+
+        return nearest_toilet, min_distance
+    except (ValueError, TypeError) as e:
+        return None, None
+
+from django.http import JsonResponse
+def emergency_request(request):
+    try:
+        user_latitude = float(request.GET.get('latitude'))
+        user_longitude = float(request.GET.get('longitude'))
+        nearest_toilet, distance = get_nearest_toilet(user_latitude, user_longitude)
+
+        if nearest_toilet:
+            return JsonResponse({
+                'name': nearest_toilet.name,
+                'latitude': nearest_toilet.latitude,
+                'longitude': nearest_toilet.longitude,
+                'address': nearest_toilet.address,
+                'distance': round(distance, 2),  # km 단위로 거리 표시
+                'is_accessible': nearest_toilet.is_accessible,
+                'opening_hours': nearest_toilet.opening_hours
+            }, content_type='application/json')
+        else:
+            return JsonResponse({
+                'error': 'No toilets found'
+            }, status=404, content_type='application/json')
+    except (ValueError, TypeError):
+        return JsonResponse({
+            'error': 'Invalid coordinates provided'
+        }, status=400, content_type='application/json')
