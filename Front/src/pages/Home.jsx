@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar"
 import KakaoMap from "../components/KakaoMap"
 import useGeolocation from "../hooks/useGeolocation"
 import EmergencyButton from "../components/EmergencyButton"
+import AdvertiseContainer from "../components/AdvertiseContainer"
 import "./Home.css"
 
 const Home = () => {
@@ -27,11 +28,7 @@ const Home = () => {
     <div className="Home">
       <main className="phone_container">
         <section className="site_title">
-          <h1>POOJIRUN🏃‍♂️</h1>
-          {/* <h2>근처 화장실 찾기</h2> */}
-          <div className="site_navbar">
-            <Navbar />
-          </div>
+          <Navbar />
         </section>
         <section className="main_section">
           {location.loaded ? (
@@ -61,8 +58,8 @@ const Home = () => {
             <button onClick={onClickSearch}>🔍</button>
             {/* button click시 위치 기준 화장실 찾기 */}
           </div>
-          <div className="adver_bar">
-            <div className="advertise">광고</div>
+          <div className="ad_bar">
+            <AdvertiseContainer />
           </div>
         </section>
       </main>

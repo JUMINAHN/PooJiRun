@@ -14,35 +14,35 @@ const navCategory = [
 
 const Navbar = () => {
   const nav = useNavigate() // => 관련 링크
+  // navbar의 클릭여부에 따라서 bar가 펼쳐지고 안펼쳐지고 => long, short
   const [moveBar, setMoveBar] = useState("short") //short와 long
 
   const onClickChangeNav = () => {
+    // onClickOpenNav() //이거 전달해주고 => 이건 필요없을 것 같음 일단 보류
     setMoveBar((prev) => (prev === "short" ? "long" : "short")) //toggle로 진행
   }
 
-  return (
-    <header className="Navbar">
-      <h1>POOJIRUN🏃‍♂️</h1>
-      {/* nav_btn 속성을 short와 long으로 바꿔야 할 것 같음 */}
-      <div className={`nav_btn nav_btn_${moveBar}`}>
-        {moveBar === "short" ? (
-          <div className="nav_short_wrap" onClick={onClickChangeNav}>
-            {/* font size 간격 */}
-            <div className="nav_short">
-              <p>≡</p>
-            </div>
-          </div>
-        ) : (
-          <div className="nav_long_wrap" onClick={onClickChangeNav}>
-            {navCategory.map((item) => (
-              <div className="nav_long" key={item.id} onClick={() => nav(item.link)}>
-                <p>{item.category}</p>
-              </div>
-            ))}
-          </div>
-        )}
+  if (moveBar === "short") {
+    //삼항 연산자 넣으니까 에러
+    return (
+      <div className="Navbar Navbar_short" onClick={onClickChangeNav}>
+        {/* font size 간격 */}
+        <p className="short_nav">≡</p>
       </div>
-    </header>
+    )
+  }
+
+  return (
+    // {
+    // 	moveBar === 'short' ? () : () => why error?
+    // }
+    <div className="Navbar Navbar_long" onClick={onClickChangeNav}>
+      {navCategory.map((item) => (
+        <div className="long_nav" key={item.id} onClick={() => nav(item.link)}>
+          <p>{item.category}</p>
+        </div>
+      ))}
+    </div>
   )
 }
 

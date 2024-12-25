@@ -1,11 +1,11 @@
-.Home {
+.MainContainer {
   justify-content: center;
   align-items: center;
   margin: 20px;
   height: 95vh;
 }
 
-.Home .phone_container {
+.MainContainer .phone_container {
   margin: auto;
   /* 자체적으로 phone_container의 마진 */
   border: 2px solid black;
@@ -34,17 +34,53 @@
   z-index: 10;
 }
 
-.Home .phone_container .site_title {
-  /* 열리면  main이 가려지면 안됨*/
-  /* position: absolute;
-  z-index: 10; */
+.MainContainer .phone_container .title_section {
+  display: flex;
+  /* justify-content: space-between; */
+  justify-content: space-between;
+}
+
+.MainContainer .phone_container .site_navbar {
+  /* border: 1px solid black; */
+  margin-top: 0px;
+  position: absolute;
+  z-index: 10;
+  right: 50px;
+  /* justify-content: flex-start; */
+}
+
+.MainContainer .phone_container .title_section > h1 {
+  margin-top: 0px;
+  justify-content: flex-end;
+  position: relative;
+  /* 왜 안먹나? : flex-end?*/
+}
+
+/* h1에 마우스 올리면 화장실 찾기 */
+.MainContainer .phone_container .title_section > h1:hover::before {
+  content: "💨 근처 화장실을 찾을 수 있어요";
+  z-index: 11;
+  font-size: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: rgb(192, 234, 248, 0.6);
+  left: 163px;
+  position: absolute;
+  text-wrap: none;
+  white-space: nowrap;
+}
+/* 말풍선 형식으로 만들고 싶은데 어떻게 만들지 */
+
+.MainContainer .phone_container .title_section > h2 {
+  margin-top: 3px;
+  margin-right: 80px;
 }
 
 .no_content > p {
   font-size: 30px;
 }
 
-.Home .under_nav {
+.MainContainer .under_nav {
   width: 100%;
   border-radius: 15px;
   height: 250px; /* border: 1px solid rgb(236, 236, 236); */
