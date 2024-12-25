@@ -1,0 +1,17 @@
+.btn {
+  /* 경고 이모티콘 */
+
+  border: none;
+  border-radius: 13px;
+  background-color: rgb(252, 205, 205);
+  font-size: 22px;
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.navbar {
+  border: 1px solid black;
+  background-color: rgb(192, 234, 248);
+  border-radius: 13px;
+}

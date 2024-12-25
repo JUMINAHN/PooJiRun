@@ -1,0 +1,5 @@
+html .body .root {
+  /* background-color: black; */
+  /* 왜 배경 적용이 안됨? */
+  background-color: rgb(236, 236, 236);
+}
