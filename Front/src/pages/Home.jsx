@@ -8,7 +8,6 @@ import useCustomVH from "../hooks/useCustomVH"
 import "./Home.css"
 import LoadingPage from "../components/LoadingPage"
 
-
 const Home = () => {
   // 자체적으로 초기 랜더링시에 발생되는 내용을 수행하게 해주는 것
   useCustomVH() //호출자체를 해주는건가? QQ
