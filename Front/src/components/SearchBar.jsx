@@ -8,7 +8,7 @@ const SearchBar = ({ searchData }) => {
   //초기값을 무엇으로 사용할건지?
   // console.log("searchBar", searchData)
   const dispatch = useDispatch()
-  const { coordinate, success, error } = useSelector((state) => state.location)
+  const { coordinate = { latitude: null, longitude: null }, success, error } = useSelector((state) => state.location)
 
   const [myLocation, setSearchData] = useState(searchData) // 뭐지 또 돌아감 => 아 초기랜더링!!
   useEffect(() => {
@@ -32,7 +32,6 @@ const SearchBar = ({ searchData }) => {
 
   // console.log(dispatch)
   //action => dispatch 즉 coordinate 확인하면됨
-  console.log(coordinate, "?") //이 내용을 카카오에서 변환해야 함
 
   const onChangeSearch = (e) => {
     setSearchData(e.target.value)
