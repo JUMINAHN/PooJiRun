@@ -1,0 +1,78 @@
+.Navbar {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.Navbar > h1 {
+  margin-top: 3px;
+}
+
+.Navbar > h1:hover::before {
+  content: "💨 근처 화장실을 찾을 수 있어요";
+  z-index: 11;
+  font-size: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: rgb(192, 234, 248, 0.6);
+  left: 160px;
+  position: absolute;
+  text-wrap: none;
+  white-space: nowrap;
+}
+
+/* 말풍선 꼬리 부분 추가 */
+/* .Navbar > h1:hover::after {
+  content: "";
+  position: absolute;
+  left: 170px;
+  top: 38px; 
+  width: 7px;
+  height: 10px;
+  background-color: rgb(192, 234, 248, 0.6);
+  transform: rotate(75deg);
+  z-index: 10;
+} */
+
+.nav_btn {
+  cursor: pointer;
+  background-color: rgb(245, 245, 245);
+  height: 48px;
+  border-radius: 13px;
+}
+
+.nav_btn_long {
+  height: auto;
+  z-index: 10;
+}
+
+.nav_btn .nav_short_wrap .nav_short {
+  border-radius: 13px;
+  background-color: rgb(245, 245, 245);
+  text-align: center;
+  margin-top: 3px;
+  padding-top: 3px;
+  width: 50px;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.nav_btn .nav_short_wrap .nav_short > p {
+  margin: 3px;
+  /* 여기서 p의 위치를 조금 더 조정을 해야할 것 같은데 */
+}
+
+.Navbar .nav_btn .nav_long_wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3px;
+  z-index: 10;
+}
+
+.Navbar .nav_btn .nav_long > p {
+  margin: 3px;
+  font-size: 14px;
+  padding: 5px;
+}
