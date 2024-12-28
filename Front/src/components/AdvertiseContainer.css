@@ -1,0 +1,9 @@
+.AdvertiseContainer {
+  padding: 40px;
+  border-radius: 5px;
+  background-color: white;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* p에 적용할지 고민 일단 keep */
