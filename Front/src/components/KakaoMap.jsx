@@ -1,105 +1,95 @@
-// env에 있는 데이터 접근
-// vite에는 process가 아님
-
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import LoadingPage from "./LoadingPage"
 import { useDispatch, useSelector } from "react-redux"
 import { getCurrentLocation } from "../store/slices/locationSlice" //action 파일
 
-// 여기 KAKAOMAP으로 전달받는 내용을 maker들로 표시하는데
-// 일단 1. 현위치 == coordinate
 // 일단 2. 긴급 버튼 위치 => 마커 1개 === nearestToiles
 // 일단 3. 검색 위치 => 주변 검색 5개? === toilet
 
-// geoLocation으로 받은 것을 => redux state로 담는게 현재 best일 것 같음
-// 그리고 가까운 화장실 마커 한개
-// 근처 화장실 마커
+const KakaoMap = ({ nearestToilet, changeAddress }) => {
+  const [addressChange, setAddressChange] = useState("") //초기값
+  const [loadMap, setLoadMap] = useState(false) //맵이 로드되었을 때 실행되도록
+  //map이랑 geolocator, marker 인스턴스 생성
+  const mapInstance = useRef(null) //초기값 null로
+  const markerInstance = useRef(null)
+  const geocoderInstance = useRef(null)
 
-// currentLocation을 받는게 아니라 여기서 직접적으로 사용하게
-const KakaoMap = ({ nearestToilet }) => {
-  //coordinate 미이용
-  const dispatch = useDispatch() // dispatch => action 즉 state값 바꿀 친구
-  //state명이 location
-  //redux 자체값 가져오기
-  const { coordinate = { latitude: null, longitude: null }, success, error } = useSelector((state) => state.location) || {} //내부에 있는 초기값들
-  //reudx가져오고 => {}는 왜? QQQ
+  const giveAddressData = useCallback((result, status) => {
+    // isSubscribed: 컴포넌트가 마운트된 상태인지 확인
+    // status === OK: API 호출이 성공했는지 확인
+    if (status === window.kakao.maps.services.Status.OK) {
+      // result[0].address.address_name: 첫 번째 결과의 주소명을 가져옴
+      setAddressChange(result[0].address.address_name)
+    }
+  }, [])
 
-  //초기값들이 설정이되고 => 얘 자체는 state
-  //위치값 가져오는 것 한번이면 됨
+  //저장소에서 가져오기
+  const dispatch = useDispatch()
+  const { coordinate = { latitude: null, longitude: null }, success, error } = useSelector((state) => state.location)
   useEffect(() => {
-    dispatch(getCurrentLocation()) //dispatch로 선언한거에 => 비동기 메서드 => 즉 set + action 값
-  }, [dispatch]) //위치가 바뀔때마다 호출됨
+    dispatch(getCurrentLocation())
+  }, []) //컴포넌트 마운트시에만 호출 => Q. 궁금한게 그럼 추후 위치가 변경될때는? -> 한번 위치받아오면 끝이 아닌지?? QQ
 
   if (nearestToilet) {
-    console.log(nearestToilet)
+    console.log(nearestToilet, "innerkakomap")
   }
-  const [loadMap, setLoadMap] = useState(false) //초기에는 false
-  //script 자체를 생성
   useEffect(() => {
-    const script = document.createElement("script") //script 자체를 생성
+    const script = document.createElement("script")
     script.type = "text/javascript"
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAO_APP_KEY}&autoload=false`
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAO_APP_KEY}&libraries=services&autoload=false`
     script.async = true
-    // 스크립트 자체가 로드가 완료되면?
     script.onload = () => {
-      //load되면
       window.kakao.maps.load(() => {
         setLoadMap(true)
+        geocoderInstance.current = new window.kakao.maps.services.Geocoder() //이때 geocoder 생성 => map이 로드되었을떄 geocoder 생성!
       })
     }
-    // script 로드가 완료된 후에 appendChild
-    document.head.appendChild(script) //이거하고 난뒤에 chrome => thirdy-party가 이루어짐
+    document.head.appendChild(script)
     return () => {
-      document.head.removeChild(script) //append한 내용 제거
+      document.head.removeChild(script)
     }
   }, [])
 
   useEffect(() => {
-    // loadMap && coordinate?.latitude && coordinate?.longitude
+    let isSubscribed = true
     if (loadMap && coordinate.latitude !== null && coordinate.longitude !== null) {
-      //좌표가 유효한 경우에만 실행
-      //map이 로드되었을때만 컴포넌트를 띄우겠따.
       const container = document.getElementById("map")
-      if (container) {
-        const options = {
-          // 받아오는 값이 잘못됨
-          center: new window.kakao.maps.LatLng(coordinate.latitude, coordinate.longitude),
-          level: 3,
+      if (container && isSubscribed) {
+        if (!mapInstance.current) {
+          mapInstance.current = new window.kakao.maps.Map(container, {
+            center: new window.kakao.maps.LatLng(coordinate.latitude, coordinate.longitude),
+            level: 3,
+          })
+        } else {
+          const newCenter = new window.kakao.maps.LatLng(coordinate.latitude, coordinate.longitude)
+          mapInstance.current.setCenter(newCenter) //여기서 set은 뭔지? ref 자체에 set컴포넌트가 생기는건지..? => 해당 내용뭔지 모르겠음
         }
-        const map = new window.kakao.maps.Map(container, options)
 
-        // 지도 마커 표시 => 그대로 kakaoMap
-        const markerPosition = new window.kakao.maps.LatLng(coordinate.latitude, coordinate.longitude)
-
-        const marker = new window.kakao.maps.Marker({
-          position: markerPosition,
+        if (markerInstance.current) {
+          markerInstance.current.setMap(null) //이건 기존 kakao맵에 있는 setMap을 사용하는 것 같긴한데
+        }
+        markerInstance.current = new window.kakao.maps.Marker({
+          position: new window.kakao.maps.LatLng(coordinate.latitude, coordinate.longitude),
+          map: mapInstance.current,
         })
-        marker.setMap(map)
-
-        // if (nearestToilet) {
-        //   const markerPosition = new window.kakao.maps.LatLng(nearestToilet.lat, nearestToilet.lng)
-        //   const marker = new window.kakao.maps.Marker({
-        //     position: markerPosition,
-        //   })
-        //   marker.setMap(map)
-        // }
-        //지도 위에 표시하도록 설정
-        // const iwContent =
-        //     '<div style="padding:10px;">현재 위치<br><a href="https://map.kakao.com/link/map/Hello World!,33.450701,126.570667" style="color:blue" target="_blank">카카오맵으로 보기</a> <a href="https://map.kakao.com/link/to/Hello World!,33.450701,126.570667" style="color:blue" target="_blank">카카오 맵으로 길찾기</a></div>', // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
-        //   iwPosition = new window.kakao.maps.LatLng(33.450701, 126.570667) //인포윈도우 표시 위치입니다
-
-        // 인포윈도우를 생성합니다
-        // const infowindow = new window.kakao.maps.InfoWindow({
-        //   position: iwPosition,
-        //   content: iwContent,
-        // })
-
-        // 마커 위에 인포윈도우를 표시합니다. 두번째 파라미터인 marker를 넣어주지 않으면 지도 위에 표시됩니다
-        // infowindow.open(map, marker)
+        geocoderInstance.current?.coord2Address(coordinate.longitude, coordinate.latitude, giveAddressData)
       }
+    } //if문
+    return () => {
+      isSubscribed = false //
     }
-  }, [loadMap, coordinate, nearestToilet]) //map이 로드될떄마다, 현재 위치가 바뀔 떄 마다
+  }, [loadMap, coordinate, nearestToilet]) //현재 위치가 바뀔 떄 마다 => 원래 Q. 원래 loadMap을 넣었었는데 그럼 맵을 로드할때마다 새로운곳에 가지기 때문에 상관이 없는건지?
+  //그냥 맵은 로딩한번되고, 그뒤에 coordinate에 의해서 좌표가 바꾸는거 아닌지..?
 
+  //다음 랜더링 사이클로 지연
+  useEffect(() => {
+    if (addressChange) {
+      //이러면 undefined랑 ""이 아닐때가 자동 필터림 => undefined는 false이고 ""는 ?? false?
+      changeAddress(addressChange)
+    }
+  }, [addressChange])
+
+  //return문
   return <div className="KakaoMap">{loadMap ? <div id="map" style={{ width: "100%", height: "500px" }}></div> : <LoadingPage />}</div>
 }
 

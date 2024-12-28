@@ -99,9 +99,6 @@ def get_nearest_toilet(user_latitude, user_longitude):
         return None, None
 
 from django.http import JsonResponse
-from django.http import JsonResponse
-
-from django.http import JsonResponse
 
 def emergency_request(request):
     try:
@@ -110,22 +107,45 @@ def emergency_request(request):
         nearest_toilet, distance = get_nearest_toilet(user_latitude, user_longitude)
 
         if nearest_toilet:
-            # Kakao API를 사용하여 거리와 소요 시간 계산
             distance_text, duration_text = get_distance_and_duration(
                 user_latitude, user_longitude,
                 nearest_toilet.latitude, nearest_toilet.longitude
             )
 
+            # 운영 시간 정보 처리
+            opening_hours = nearest_toilet.opening_hours if nearest_toilet.opening_hours and nearest_toilet.opening_hours.lower() != 'nan' else "정보 없음"
+            opening_hours_detail = nearest_toilet.opening_hours_detail if nearest_toilet.opening_hours_detail and nearest_toilet.opening_hours_detail.lower() != 'nan' else "상세 정보 없음"
+
             return JsonResponse({
                 'name': nearest_toilet.name,
-                'latitude': nearest_toilet.latitude,
-                'longitude': nearest_toilet.longitude,
                 'address': nearest_toilet.address,
+                'latitude': nearest_toilet.latitude,  # 위도 추가
+                'longitude': nearest_toilet.longitude,  # 경도 추가
+                'total_stalls': {
+                    'male': nearest_toilet.male_stalls + nearest_toilet.male_urinals,
+                    'female': nearest_toilet.female_stalls
+                },
+                'is_accessible': nearest_toilet.is_accessible,
+                'management': {
+                    'agency': nearest_toilet.managing_agency_name or "정보 없음",
+                    'phone': nearest_toilet.managing_agency_phone or "정보 없음"
+                },
+                'security': {
+                    'cctv': nearest_toilet.cctv_installed,
+                    'emergency_bell': nearest_toilet.emergency_bell_installed
+                },
+                'facilities': {
+                    'diaper_table': nearest_toilet.diaper_change_table_location or "없음",
+                    'opening_hours': opening_hours,
+                    'opening_hours_detail': opening_hours_detail
+                },
                 'distance': round(distance, 2),
                 'estimated_distance': distance_text,
                 'estimated_duration': duration_text,
-                'is_accessible': nearest_toilet.is_accessible,
-                'opening_hours': nearest_toilet.opening_hours
+                'user_location': {  # 사용자 위치 정보 추가
+                    'latitude': user_latitude,
+                    'longitude': user_longitude
+                }
             })
         else:
             return JsonResponse({'error': 'No toilets found'}, status=404)
