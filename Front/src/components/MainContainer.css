@@ -1,0 +1,117 @@
+.MainContainer {
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+  height: 95vh;
+}
+
+.MainContainer .phone_container {
+  margin: auto;
+  /* 자체적으로 phone_container의 마진 */
+  border: 2px solid black;
+  background-color: rgb(255, 255, 255);
+  box-sizing: border-box;
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%;
+  height: 100%;
+  /* width: 731px; */
+  /* height: 915px; */
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  /* align-items: center; */
+}
+
+.map_section {
+  position: relative;
+}
+
+.btn_section {
+  position: absolute;
+  right: 75px;
+  top: 51%;
+  z-index: 10;
+}
+
+.MainContainer .phone_container .title_section {
+  display: flex;
+  /* justify-content: space-between; */
+  justify-content: space-between;
+}
+
+.MainContainer .phone_container .site_navbar {
+  /* border: 1px solid black; */
+  margin-top: 0px;
+  position: absolute;
+  z-index: 10;
+  right: 50px;
+  /* justify-content: flex-start; */
+}
+
+.MainContainer .phone_container .title_section > h1 {
+  margin-top: 0px;
+  justify-content: flex-end;
+  position: relative;
+  /* 왜 안먹나? : flex-end?*/
+}
+
+/* h1에 마우스 올리면 화장실 찾기 */
+.MainContainer .phone_container .title_section > h1:hover::before {
+  content: "💨 근처 화장실을 찾을 수 있어요";
+  z-index: 11;
+  font-size: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: rgb(192, 234, 248, 0.6);
+  left: 163px;
+  position: absolute;
+  text-wrap: none;
+  white-space: nowrap;
+}
+/* 말풍선 형식으로 만들고 싶은데 어떻게 만들지 */
+
+.MainContainer .phone_container .title_section > h2 {
+  margin-top: 3px;
+  margin-right: 80px;
+}
+
+.no_content > p {
+  font-size: 30px;
+}
+
+.MainContainer .under_nav {
+  width: 100%;
+  border-radius: 15px;
+  height: 250px; /* border: 1px solid rgb(236, 236, 236); */
+  background-color: rgb(248, 245, 245);
+}
+
+.under_nav .search_bar {
+  padding: 20px 20px 10px 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.under_nav .search_bar > input {
+  flex: 1;
+  padding: 5px;
+  border-radius: 30px;
+  border: none;
+}
+/* 자동 focus */
+
+.under_nav .search_bar > button {
+  /* background-color: rgb(229, 229, 229); */
+  background-color: rgb(192, 234, 248);
+  border: none;
+  font-size: 18px;
+  padding: 15px;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.under_nav .ad_bar {
+  /* border: 1px solid white; */
+  padding: 20px;
+}

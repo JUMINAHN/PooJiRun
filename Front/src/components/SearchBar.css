@@ -1,0 +1,36 @@
+.SearchBar .search_section {
+  padding: 20px 20px 10px 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.SearchBar .search_section > input {
+  flex: 1;
+  padding: 5px;
+  border-radius: 30px;
+  border: none;
+  /* 여기에도 text-alin이 적용되어야 함 */
+  text-align: center;
+}
+/* 자동 focus */
+
+.SearchBar .search_section > input::placeholder {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.SearchBar .search_section > button {
+  /* background-color: rgb(229, 229, 229); */
+  background-color: rgb(192, 234, 248);
+  border: none;
+  font-size: 18px;
+  padding: 15px;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.SearchBar .advertise_section {
+  /* border: 1px solid white; */
+  padding: 20px;
+}
